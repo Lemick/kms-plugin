@@ -1,0 +1,26 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>com.lemick.kmsdecrypt</id>
+    <name>Encrypt and Decrypt with KMS</name>
+    <vendor>JetBrains</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <resource-bundle>messages.bundle</resource-bundle>
+
+
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="Decrypt With KMS" displayType="TOOL_WINDOW"/>
+        <notificationGroup id="Encrypt With KMS" displayType="TOOL_WINDOW"/>
+    </extensions>
+
+    <actions>
+        <action id="EncryptWithKmsAction" class="com.lemick.kmsplugin.actions.EncryptWithKmsAction" text="Encrypt with KMS">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+
+        <action id="DecryptWithKmsAction" class="com.lemick.kmsplugin.actions.DecryptWithKmsAction" text="Decrypt with KMS">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
