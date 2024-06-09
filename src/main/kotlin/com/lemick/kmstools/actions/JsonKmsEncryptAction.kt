@@ -17,7 +17,7 @@ import com.lemick.kmstools.services.NotificationService
 import com.lemick.kmstools.services.SettingsService
 
 
-class EncryptWithKmsAction : AnAction() {
+class JsonKmsEncryptAction : AnAction() {
 
     private val kmsService = service<KmsService>()
     private val settingsService = service<SettingsService>()
@@ -68,9 +68,9 @@ class EncryptWithKmsAction : AnAction() {
         val selectedText = document.getText(TextRange(start, end))
 
         try {
-            val encryptedValue = kmsService.encrypt(selectedText, kmsKeyId)
+            val encryptedValue = kmsService.encryptJsonWithDatakey(selectedText, kmsKeyId)
             WriteCommandAction.runWriteCommandAction(project) {
-                document.replaceString(start, end, encryptedValue)
+                document.replaceString(start, end, encryptedValue!!)
             }
             primaryCaret.removeSelection()
             notificationService.notify(project, "Encryption successful", NotificationType.INFORMATION)
@@ -78,6 +78,7 @@ class EncryptWithKmsAction : AnAction() {
             notificationService.notify(project, "Error during encryption: ${exception.message}", NotificationType.ERROR)
         }
     }
+
 
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT

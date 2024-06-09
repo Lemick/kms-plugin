@@ -12,7 +12,7 @@ import com.lemick.kmstools.services.KmsService
 import com.lemick.kmstools.services.NotificationService
 import software.amazon.awssdk.core.exception.SdkClientException
 
-class DecryptWithKmsAction : AnAction() {
+class RawKmsDecryptAction : AnAction() {
 
     private val kmsService = service<KmsService>()
     private val notificationService = service<NotificationService>()

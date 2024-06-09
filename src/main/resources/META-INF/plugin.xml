@@ -18,19 +18,25 @@
         <group id="org.intellij.sdk.action.GroupedActions" text="KMS Tools" popup="true">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
 
-            <action id="EncryptWithKmsAction" class="com.lemick.kmstools.actions.EncryptWithKmsAction"
-                    text="Encrypt with KMS">
+            <action id="RawKmsEncryptAction" class="com.lemick.kmstools.actions.RawKmsEncryptAction"
+                    text="Raw KMS Encrypt">
             </action>
 
-            <action id="DecryptWithKmsAction" class="com.lemick.kmstools.actions.DecryptWithKmsAction"
-                    text="Decrypt with KMS">
+            <action id="RawKmsDecryptAction" class="com.lemick.kmstools.actions.RawKmsDecryptAction"
+                    text="Raw KMS Decrypt">
+            </action>
+
+            <action id="JsonKmsEncryptAction" class="com.lemick.kmstools.actions.JsonKmsEncryptAction"
+                    text="JSON KMS Encrypt">
+            </action>
+
+            <action id="JsonKmsDecryptAction" class="com.lemick.kmstools.actions.JsonKmsDecryptAction"
+                    text="JSON KMS Decrypt">
             </action>
 
             <action id="SetupKmsSettingsAction" class="com.lemick.kmstools.actions.SetupKmsSettingsAction"
                     text="Setup KMS Settings">
             </action>
         </group>
-
-
     </actions>
 </idea-plugin>
