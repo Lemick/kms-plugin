@@ -1,4 +1,4 @@
-package com.lemick.kmsplugin
+package com.lemick.kmstools
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.NonNls

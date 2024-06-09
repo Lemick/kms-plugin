@@ -1,15 +1,17 @@
-package com.lemick.kmsplugin.services
+package com.lemick.kmstools.services
 
 import ai.grazie.utils.mpp.Base64
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider
+import com.lemick.kmstools.model.KeyWithAliases
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.core.SdkBytes
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.kms.model.DecryptRequest
 import software.amazon.awssdk.services.kms.model.EncryptRequest
-import software.amazon.awssdk.services.kms.model.KeyListEntry
+import software.amazon.awssdk.services.kms.model.ListAliasesRequest
 import software.amazon.awssdk.services.kms.model.ListKeysRequest
 import java.net.URI
 
@@ -38,21 +40,31 @@ class KmsService {
         return response.plaintext().asUtf8String()
     }
 
-    fun listKeys(): MutableList<KeyListEntry> {
-        val listKeysRequest = ListKeysRequest.builder()
-            .limit(100)
-            .build()
+    fun listKeysWithAliases(): List<KeyWithAliases> {
+        val client = createClient()
 
-        val response = createClient().listKeys(listKeysRequest)
-        return response.keys()
+        val keysList = client
+            .listKeys(ListKeysRequest.builder().limit(100).build())
+            .keys()
+        val aliasesList = client
+            .listAliases(ListAliasesRequest.builder().limit(100).build())
+            .aliases()
+
+        return keysList.map { keyEntry ->
+            val aliasesForKey = aliasesList.filter { it.targetKeyId() == keyEntry.keyId() }.map { it.aliasName() }
+            KeyWithAliases(keyEntry.keyId(), aliasesForKey)
+        }
     }
 
+    fun getAvailableRegions(): List<String> {
+        return Region.regions().map { it.id() }.sorted()
+    }
 
     private fun createClient(): KmsClient {
         return KmsClient.builder()
             .endpointOverride(URI(settingsService.kmsEndpoint))
-            .region(Region.US_EAST_1)
-            .credentialsProvider(AnonymousCredentialsProvider.create())
+            .region(Region.of(settingsService.kmsRegion))
+            .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("key-id", "secret")))
             .build()
     }
 }

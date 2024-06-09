@@ -1,4 +1,4 @@
-package com.lemick.kmsplugin.services
+package com.lemick.kmstools.services
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.components.Service
@@ -17,4 +17,8 @@ class SettingsService {
     var kmsEndpoint: String
         get() = properties.getValue("$pluginId.kms-endpoint", "http://localhost:4566")
         set(value) = properties.setValue("$pluginId.kms-endpoint", value)
+
+    var kmsRegion: String
+        get() = properties.getValue("$pluginId.kms-region", "eu-west-1")
+        set(value) = properties.setValue("$pluginId.kms-region", value)
 }

@@ -1,8 +1,8 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.lemick.kmsdecrypt</id>
-    <name>Encrypt and Decrypt with KMS</name>
-    <vendor>JetBrains</vendor>
+    <id>com.lemick.kmstools</id>
+    <name>KMS Tools</name>
+    <vendor>Lemick</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
@@ -15,12 +15,22 @@
     </extensions>
 
     <actions>
-        <action id="EncryptWithKmsAction" class="com.lemick.kmsplugin.actions.EncryptWithKmsAction" text="Encrypt with KMS">
+        <group id="org.intellij.sdk.action.GroupedActions" text="KMS Tools" popup="true">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-        </action>
 
-        <action id="DecryptWithKmsAction" class="com.lemick.kmsplugin.actions.DecryptWithKmsAction" text="Decrypt with KMS">
-            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-        </action>
+            <action id="EncryptWithKmsAction" class="com.lemick.kmstools.actions.EncryptWithKmsAction"
+                    text="Encrypt with KMS">
+            </action>
+
+            <action id="DecryptWithKmsAction" class="com.lemick.kmstools.actions.DecryptWithKmsAction"
+                    text="Decrypt with KMS">
+            </action>
+
+            <action id="SetupKmsSettingsAction" class="com.lemick.kmstools.actions.SetupKmsSettingsAction"
+                    text="Setup KMS Settings">
+            </action>
+        </group>
+
+
     </actions>
 </idea-plugin>

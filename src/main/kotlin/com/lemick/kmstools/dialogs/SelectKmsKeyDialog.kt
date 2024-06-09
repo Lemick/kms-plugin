@@ -1,17 +1,18 @@
-package com.lemick.kmsplugin.dialogs
+package com.lemick.kmstools.dialogs
 
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
+import com.lemick.kmstools.model.KeyWithAliases
 import java.awt.Dimension
 import java.awt.GridLayout
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class SelectKmsKeyDialog(kmsKeyIds: List<String>) : DialogWrapper(true) {
-    private val kmsKeyIdComboBox = ComboBox(kmsKeyIds.toTypedArray())
+class SelectKmsKeyDialog(availableKeys: List<KeyWithAliases>) : DialogWrapper(true) {
+    private val kmsKeyIdComboBox = ComboBox(availableKeys.toTypedArray())
 
-    val kmsKeyId: String get() = kmsKeyIdComboBox.selectedItem as String
+    val selectedKmsKeyId: String get() = (kmsKeyIdComboBox.selectedItem as KeyWithAliases).keyId
 
     init {
         init()
@@ -37,7 +38,7 @@ class SelectKmsKeyDialog(kmsKeyIds: List<String>) : DialogWrapper(true) {
     }
 
     override fun isResizable(): Boolean {
-        return false;
+        return false
     }
 }
 
