@@ -73,7 +73,6 @@ class RawKmsEncryptAction : AnAction() {
                 document.replaceString(start, end, encryptedValue)
             }
             primaryCaret.removeSelection()
-            notificationService.notify(project, "Encryption successful", NotificationType.INFORMATION)
         } catch (exception: Exception) {
             notificationService.notify(project, "Error during encryption: ${exception.message}", NotificationType.ERROR)
         }

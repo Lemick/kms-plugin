@@ -1,5 +1,7 @@
 package com.lemick.kmstools.services
 
+import AES
+import AESType
 import ai.grazie.utils.mpp.Base64
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -12,9 +14,6 @@ import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.kms.model.*
 import java.net.URI
-import javax.crypto.Cipher
-import javax.crypto.spec.GCMParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 
 @Service(Service.Level.APP)
@@ -41,17 +40,13 @@ class KmsService {
         val datakeyResult = createClient().generateDataKey(generateDataKeyRequest)
         val cipherTextKey = datakeyResult.ciphertextBlob()
 
-        val secretKey = SecretKeySpec(datakeyResult.plaintext().asByteArray(), "AES")
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
-
-        val nonce = cipher.iv
-        val cipheredPayload = cipher.doFinal(dataToEncrypt.toByteArray())
+        val aesEncryptor = AES.create(AESType.GCM, datakeyResult.plaintext().asByteArray())
+        val aesEncryptedResult = aesEncryptor.encrypt(dataToEncrypt.toByteArray())
 
         val json = JsonObject()
-        json.put("ciphered_payload", Base64.encode(cipheredPayload))
         json.put("ciphered_key", Base64.encode(cipherTextKey.asByteArray()))
-        json.put("nonce", Base64.encode(nonce))
+        json.put("ciphered_payload", Base64.encode(aesEncryptedResult.first))
+        json.put("nonce", Base64.encode(aesEncryptedResult.second))
 
         return json.toString()
     }
@@ -59,21 +54,23 @@ class KmsService {
     fun decryptJsonWithDataKey(json: String): String {
         val encryptedJson = JsonObject.parse(json)
 
-
-        val cipheredPayload = Base64.decode(encryptedJson.get("ciphered_payload"))
         val cipheredKey = Base64.decode(encryptedJson.get("ciphered_key"))
+        val cipheredPayload = Base64.decode(encryptedJson.get("ciphered_payload"))
         val nonce = Base64.decode(encryptedJson.get("nonce"))
 
         val decryptRequest = DecryptRequest.builder().ciphertextBlob(SdkBytes.fromByteArray(cipheredKey)).build()
-        val decryptedKey = createClient().decrypt(decryptRequest).plaintext().asByteArray()
+        val datakeyResult = createClient().decrypt(decryptRequest).plaintext().asByteArray()
 
-        val secretKey = SecretKeySpec(decryptedKey, "AES")
-        val gcmSpec = GCMParameterSpec(128, nonce)
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec)
+        for (type in AESType.values()) {
+            try {
+                val aesEncryptor = AES.create(type, datakeyResult)
+                val aesEncryptedResult = aesEncryptor.decrypt(cipheredPayload, nonce)
+                return String(aesEncryptedResult)
+            } catch (_: Exception) {
+            }
+        }
 
-        val decryptedPayload = cipher.doFinal(cipheredPayload)
-        return String(decryptedPayload)
+        throw IllegalArgumentException("AES decryption failed")
     }
 
     fun decrypt(dataToDecrypt: String): String {

@@ -70,10 +70,9 @@ class JsonKmsEncryptAction : AnAction() {
         try {
             val encryptedValue = kmsService.encryptJsonWithDatakey(selectedText, kmsKeyId)
             WriteCommandAction.runWriteCommandAction(project) {
-                document.replaceString(start, end, encryptedValue!!)
+                document.replaceString(start, end, encryptedValue)
             }
             primaryCaret.removeSelection()
-            notificationService.notify(project, "Encryption successful", NotificationType.INFORMATION)
         } catch (exception: Exception) {
             notificationService.notify(project, "Error during encryption: ${exception.message}", NotificationType.ERROR)
         }

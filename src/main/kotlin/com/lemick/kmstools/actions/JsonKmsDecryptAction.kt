@@ -68,7 +68,6 @@ class JsonKmsDecryptAction : AnAction() {
                 document.replaceString(start, end, decryptedValue)
             }
             primaryCaret.removeSelection()
-            notificationService.notify(project, "Decryption successful", NotificationType.INFORMATION)
         } catch (exception: Exception) {
             notificationService.notify(project, "Error during decryption: ${exception.message}", NotificationType.ERROR)
         }

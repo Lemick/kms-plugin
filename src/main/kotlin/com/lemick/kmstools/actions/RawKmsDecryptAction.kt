@@ -37,8 +37,6 @@ class RawKmsDecryptAction : AnAction() {
                 editor.document.replaceString(start, end, decryptedValue)
             }
             editor.caretModel.primaryCaret.removeSelection()
-            notificationService.notify(project, "Decryption successful", NotificationType.INFORMATION)
-
         } catch (e: SdkClientException) {
             notificationService.notify(
                 project,
